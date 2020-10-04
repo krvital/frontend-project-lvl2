@@ -42,7 +42,7 @@ function formatDiff(diff) {
 
   const lines = diff
     .map(
-      (line) => `  ${statusToSymbol[line.status]} ${line.key}: ${line.value}`
+      (line) => `  ${statusToSymbol[line.status]} ${line.key}: ${line.value}`,
     )
     .join('\n');
 
