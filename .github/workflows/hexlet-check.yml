@@ -1,15 +1,42 @@
-name: hexlet-check
+# Name of workflow
+name: Node CI
 
+# Trigger the workflow on push or pull request
 on:
-  push:
-    branches:
-      - master
+  - push
+  - pull_request
 
 jobs:
   build:
+
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [14.x]
+
     steps:
       - uses: actions/checkout@v2
 
-      - name: Hexlet project check
-        uses: hexlet/project-action@release
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: npm install, build
+        run: |
+          make install
+        env:
+          CI: true
+
+      - name: Run linter
+        run: |
+          make lint
+
+      - name: Test & publish code coverage
+        uses: paambaati/codeclimate-action@v2.7.4
+        env:
+          CC_TEST_REPORTER_ID: f26fba5ce50e9910a79748e31554d7e73c5d97f22e35471f27aba340ce774c52
+        with:
+          coverageCommand: make test-coverage
+          debug: true
