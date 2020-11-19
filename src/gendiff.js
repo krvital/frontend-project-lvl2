@@ -1,6 +1,7 @@
 import fs from 'fs';
 import _ from 'lodash';
 import path from 'path';
+import parseData from './parsers.js';
 
 export function calcDiff(data1, data2) {
   const allKeys = Object.keys({ ...data1, ...data2 });
@@ -50,11 +51,14 @@ function formatDiff(diff) {
 }
 
 export default function genDiff(filepath1, filepath2) {
-  const file1 = fs.readFileSync(path.resolve(process.cwd(), filepath1), 'utf8');
-  const file2 = fs.readFileSync(path.resolve(process.cwd(), filepath2), 'utf8');
+  const rawData1 = fs.readFileSync(path.resolve(process.cwd(), filepath1), 'utf8');
+  const rawData2 = fs.readFileSync(path.resolve(process.cwd(), filepath2), 'utf8');
 
-  const data1 = JSON.parse(file1);
-  const data2 = JSON.parse(file2);
+  const filetype1 = path.extname(filepath1).slice(1);
+  const filetype2 = path.extname(filepath2).slice(1);
+
+  const data1 = parseData(rawData1, filetype1);
+  const data2 = parseData(rawData2, filetype2);
 
   const diff = calcDiff(data1, data2);
 
