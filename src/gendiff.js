@@ -10,6 +10,8 @@ export function calcDiff(data1, data2) {
     const value1 = data1[key];
     const value2 = data2[key];
 
+    const bothValuesAreObjets = _.isObject(value1) && _.isObject(value2);
+
     const isKeyExistsInBoth = _.has(data1, key) && _.has(data2, key);
     const areValuesEqual = value1 === value2;
 
@@ -18,6 +20,17 @@ export function calcDiff(data1, data2) {
     }
 
     if (isKeyExistsInBoth && !areValuesEqual) {
+      if (bothValuesAreObjets) {
+        return [
+          ...acc,
+          {
+            key,
+            value: calcDiff(value1, value2),
+            status: 'unmodified',
+          },
+        ];
+      }
+
       return [
         ...acc,
         { key, value: value1, status: 'deleted' },
@@ -34,25 +47,65 @@ export function calcDiff(data1, data2) {
   }, []);
 }
 
-function formatDiff(diff) {
+function indent(depth) {
+  return '  '.repeat(depth);
+}
+
+function formatObject(object, depth) {
+  const lines = Object.keys(object).map(
+    (key) => `${indent(depth + 1)}${key}: ${object[key]}`,
+  );
+
+  return `{\n${lines.join('\n')}\n${indent(depth + 1)}}`;
+}
+
+function formatDiff(diff, depth = 1) {
   const statusToSymbol = {
     unmodified: ' ',
     added: '+',
     deleted: '-',
   };
 
+  // console.log(diff);
+
   const lines = diff
-    .map(
-      (line) => `  ${statusToSymbol[line.status]} ${line.key}: ${line.value}`,
-    )
+    .map((line) => {
+      let value;
+
+      if (Array.isArray(line.value)) {
+        value = formatDiff(line.value, depth + 1);
+      } else if (_.isPlainObject(line.value)) {
+        value = formatObject(line.value, depth * 2);
+      } else {
+        value = line.value;
+      }
+
+      // if (_.isPlainObject(line.value)) {
+      //   return formatObject(line.value);
+      // }
+
+      // const newLineValue = Array.isArray(line.value)
+      //   ? formatDiff(line.value, depth + 1)
+      //   : line.value;
+
+      return `${indent(depth * 2)}${statusToSymbol[line.status]} ${
+        line.key
+      }: ${value}`;
+    })
     .join('\n');
 
-  return `{\n${lines}\n}`;
+  return `{\n${lines}\n${indent((depth - 1) * 3)}}`;
 }
 
 export default function genDiff(filepath1, filepath2) {
-  const rawData1 = fs.readFileSync(path.resolve(process.cwd(), filepath1), 'utf8');
-  const rawData2 = fs.readFileSync(path.resolve(process.cwd(), filepath2), 'utf8');
+  const rawData1 = fs.readFileSync(
+    path.resolve(process.cwd(), filepath1),
+    'utf8',
+  );
+  const rawData2 = fs.readFileSync(
+    path.resolve(process.cwd(), filepath2),
+    'utf8',
+  );
 
   const filetype1 = path.extname(filepath1).slice(1);
   const filetype2 = path.extname(filepath2).slice(1);
@@ -61,6 +114,8 @@ export default function genDiff(filepath1, filepath2) {
   const data2 = parseData(rawData2, filetype2);
 
   const diff = calcDiff(data1, data2);
+
+  // console.log(JSON.stringify(diff, null, 2));
 
   return formatDiff(diff);
 }

@@ -13,8 +13,11 @@ const o2 = { b: 2 };
 const o4 = { a: 5, b: 2 };
 
 let diff;
+let nestedDiff;
+
 beforeAll(() => {
   diff = readFileSync(getFixturePath('diff.txt'), 'utf-8');
+  nestedDiff = readFileSync(getFixturePath('diff_nested.txt'), 'utf-8');
 });
 
 test('diff for equal objects', () => {
@@ -54,4 +57,11 @@ test('diff of two yaml files', () => {
   const filepath2 = getFixturePath('file2.yml');
 
   expect(genDiff(filepath1, filepath2)).toMatch(diff);
+});
+
+test('diff of two nested files', () => {
+  const filepath1 = getFixturePath('nested1.yml');
+  const filepath2 = getFixturePath('nested2.yml');
+
+  expect(genDiff(filepath1, filepath2)).toMatch(nestedDiff);
 });
