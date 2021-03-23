@@ -1,100 +1,51 @@
 import fs from 'fs';
-import _ from 'lodash';
 import path from 'path';
+import _ from 'lodash';
 import parseData from './parsers.js';
+import { STATUSES } from './common.mjs';
+import formatDiff from './formatting.js';
 
 export function calcDiff(data1, data2) {
-  const allKeys = Object.keys({ ...data1, ...data2 });
+  const allKeys = _.sortBy(Object.keys({ ...data1, ...data2 }));
 
   return allKeys.reduce((acc, key) => {
     const value1 = data1[key];
     const value2 = data2[key];
 
-    const bothValuesAreObjets = _.isObject(value1) && _.isObject(value2);
-
     const isKeyExistsInBoth = _.has(data1, key) && _.has(data2, key);
+    const areBothObjects = _.isPlainObject(value1) && _.isPlainObject(value2);
     const areValuesEqual = value1 === value2;
 
-    if (isKeyExistsInBoth && areValuesEqual) {
-      return [...acc, { key, value: value1, status: 'unmodified' }];
+    if (areValuesEqual) {
+      return [...acc, { key, value: value1, status: STATUSES.unmodified }];
     }
 
-    if (isKeyExistsInBoth && !areValuesEqual) {
-      if (bothValuesAreObjets) {
-        return [
-          ...acc,
-          {
-            key,
-            value: calcDiff(value1, value2),
-            status: 'unmodified',
-          },
-        ];
-      }
-
+    if (!isKeyExistsInBoth) {
       return [
         ...acc,
-        { key, value: value1, status: 'deleted' },
-        { key, value: value2, status: 'added' },
+        _.has(data1, key)
+          ? { key, value: value1, status: STATUSES.deleted }
+          : { key, value: value2, status: STATUSES.added },
+      ];
+    }
+
+    if (areBothObjects) {
+      return [
+        ...acc,
+        {
+          key,
+          value: calcDiff(value1, value2),
+          status: STATUSES.unmodified,
+        },
       ];
     }
 
     return [
       ...acc,
-      _.has(data1, key)
-        ? { key, value: value1, status: 'deleted' }
-        : { key, value: value2, status: 'added' },
+      { key, value: value1, status: STATUSES.deleted },
+      { key, value: value2, status: STATUSES.added },
     ];
   }, []);
-}
-
-function indent(depth) {
-  return '  '.repeat(depth);
-}
-
-function formatObject(object, depth) {
-  const lines = Object.keys(object).map(
-    (key) => `${indent(depth + 1)}${key}: ${object[key]}`,
-  );
-
-  return `{\n${lines.join('\n')}\n${indent(depth + 1)}}`;
-}
-
-function formatDiff(diff, depth = 1) {
-  const statusToSymbol = {
-    unmodified: ' ',
-    added: '+',
-    deleted: '-',
-  };
-
-  // console.log(diff);
-
-  const lines = diff
-    .map((line) => {
-      let value;
-
-      if (Array.isArray(line.value)) {
-        value = formatDiff(line.value, depth + 1);
-      } else if (_.isPlainObject(line.value)) {
-        value = formatObject(line.value, depth * 2);
-      } else {
-        value = line.value;
-      }
-
-      // if (_.isPlainObject(line.value)) {
-      //   return formatObject(line.value);
-      // }
-
-      // const newLineValue = Array.isArray(line.value)
-      //   ? formatDiff(line.value, depth + 1)
-      //   : line.value;
-
-      return `${indent(depth * 2)}${statusToSymbol[line.status]} ${
-        line.key
-      }: ${value}`;
-    })
-    .join('\n');
-
-  return `{\n${lines}\n${indent((depth - 1) * 3)}}`;
 }
 
 export default function genDiff(filepath1, filepath2) {
@@ -114,8 +65,6 @@ export default function genDiff(filepath1, filepath2) {
   const data2 = parseData(rawData2, filetype2);
 
   const diff = calcDiff(data1, data2);
-
-  // console.log(JSON.stringify(diff, null, 2));
 
   return formatDiff(diff);
 }
