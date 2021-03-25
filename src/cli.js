@@ -7,10 +7,10 @@ export default function run() {
   program
     .version('0.0.1')
     .description('Compares two configuration files and shows a difference.')
-    .option('-f, --format [type]', 'output format')
+    .option('-f, --format [type]', 'output format', 'tree')
     .arguments('<filepath1> <filepath2>')
-    .action((filepath1, filepath2) => {
-      const diff = genDiff(filepath1, filepath2);
+    .action((filepath1, filepath2, params) => {
+      const diff = genDiff(filepath1, filepath2, params.format);
       console.log(diff);
     });
 

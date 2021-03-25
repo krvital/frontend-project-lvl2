@@ -2,7 +2,7 @@ import tree from './tree.js';
 import plain from './plain.js';
 
 export default function getFormatter(type) {
-  const formatters = { tree, plain };
+  const formatters = { tree, plain, json: JSON.stringify };
   const formatter = formatters[type];
 
   if (!formatter) {
