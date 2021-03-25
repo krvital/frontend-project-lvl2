@@ -1,11 +1,13 @@
 import tree from './tree.js';
 import plain from './plain.js';
 
-const formatters = {
-  tree,
-  plain,
-};
-
 export default function getFormatter(type) {
-  return formatters[type];
+  const formatters = { tree, plain };
+  const formatter = formatters[type];
+
+  if (!formatter) {
+    throw new Error(`Incorrect type ${type} provided`);
+  }
+
+  return formatter;
 }

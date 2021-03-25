@@ -1,7 +1,7 @@
 import yaml from 'js-yaml';
 
-function getParser(filetype) {
-  switch (filetype) {
+function getParser(fileType) {
+  switch (fileType) {
     case 'yml':
     case 'yaml':
       return yaml.safeLoad;
@@ -14,13 +14,10 @@ function getParser(filetype) {
 
 export default function parseData(data, filetype) {
   const parse = getParser(filetype);
-  let result;
 
   try {
-    result = parse(data);
+    return parse(data);
   } catch (e) {
     throw new Error('Unable to parse files');
   }
-
-  return result;
 }

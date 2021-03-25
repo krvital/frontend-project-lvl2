@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { NODE_TYPE } from '../common';
+import { NODE_TYPE } from '../node-type';
 
 function getPropertyName(property, parents) {
   return [...parents, property].join('.');
@@ -17,7 +17,7 @@ function stringify(value) {
   return value;
 }
 
-const nodeTypeToPrefix = {
+const nodeTypeToFormatter = {
   [NODE_TYPE.unchanged]: () => [],
   [NODE_TYPE.root]: (node, path, iter) => node.children.flatMap((child) => iter(child, path, iter)),
   // eslint-disable-next-line max-len
@@ -31,6 +31,6 @@ const nodeTypeToPrefix = {
 };
 
 export default function formatToPlain(diff) {
-  const iter = (node, currentPath) => nodeTypeToPrefix[node.type](node, currentPath, iter);
+  const iter = (node, currentPath) => nodeTypeToFormatter[node.type](node, currentPath, iter);
   return iter(diff, []).join('\n');
 }
