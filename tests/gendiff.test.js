@@ -29,4 +29,3 @@ test('plain diff of two nested files', () => {
 
   expect(genDiff(filepath1, filepath2, 'plain')).toMatch(plainDiff);
 });
-

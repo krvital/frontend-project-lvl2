@@ -51,7 +51,7 @@ function getFileData(filepath) {
   const filetype = path.extname(filepath).slice(1);
 
   try {
-    rawData = fs.readFileSync(path.resolve(process.cwd(), filepath),'utf8');
+    rawData = fs.readFileSync(path.resolve(process.cwd(), filepath), 'utf8');
   } catch (e) {
     throw new Error(`Incorrect filepath provided: ${filepath}`);
   }
