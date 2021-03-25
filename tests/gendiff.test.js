@@ -9,14 +9,24 @@ const __dirname = dirname(__filename); // eslint-disable-line no-underscore-dang
 const getFixturePath = (filename) => path.join(__dirname, '.', '__fixtures__', filename);
 
 let diff;
+let plainDiff;
 
 beforeAll(() => {
   diff = readFileSync(getFixturePath('diff.txt'), 'utf-8');
+  plainDiff = readFileSync(getFixturePath('diff-plain.txt'), 'utf-8');
 });
 
-test('diff of two nested files', () => {
+test('tree diff of two nested files', () => {
   const filepath1 = getFixturePath('file1.yml');
   const filepath2 = getFixturePath('file2.json');
 
-  expect(genDiff(filepath1, filepath2)).toMatch(diff);
+  expect(genDiff(filepath1, filepath2, 'tree')).toMatch(diff);
 });
+
+test('plain diff of two nested files', () => {
+  const filepath1 = getFixturePath('file1.json');
+  const filepath2 = getFixturePath('file2.yml');
+
+  expect(genDiff(filepath1, filepath2, 'plain')).toMatch(plainDiff);
+});
+
