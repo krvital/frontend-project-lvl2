@@ -2,7 +2,7 @@ import path, { dirname } from 'path';
 import { test, expect } from '@jest/globals';
 import { fileURLToPath } from 'url';
 import { readFileSync } from 'fs';
-import genDiff from '../src/gendiff';
+import generateDiff from '../src';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -16,26 +16,26 @@ test('diff of two nested files with default format', () => {
   const filepath1 = getFixturePath('file1.yml');
   const filepath2 = getFixturePath('file2.json');
 
-  expect(genDiff(filepath1, filepath2)).toMatch(diff);
+  expect(generateDiff(filepath1, filepath2)).toMatch(diff);
 });
 
 test('tree diff of two nested files', () => {
   const filepath1 = getFixturePath('file1.yml');
   const filepath2 = getFixturePath('file2.json');
 
-  expect(genDiff(filepath1, filepath2, 'stylish')).toMatch(diff);
+  expect(generateDiff(filepath1, filepath2, 'stylish')).toMatch(diff);
 });
 
 test('plain diff of two nested files', () => {
   const filepath1 = getFixturePath('file1.json');
   const filepath2 = getFixturePath('file2.yml');
 
-  expect(genDiff(filepath1, filepath2, 'plain')).toMatch(plainDiff);
+  expect(generateDiff(filepath1, filepath2, 'plain')).toMatch(plainDiff);
 });
 
 test('json diff of two nested files', () => {
   const filepath1 = getFixturePath('file1.json');
   const filepath2 = getFixturePath('file2.yml');
 
-  expect(genDiff(filepath1, filepath2, 'json')).toMatch(jsonDiff);
+  expect(generateDiff(filepath1, filepath2, 'json')).toMatch(jsonDiff);
 });
