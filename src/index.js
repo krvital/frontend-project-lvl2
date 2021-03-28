@@ -4,22 +4,13 @@ import parseData from './parsers.js';
 import getFormatter from './formatting/index.js';
 import buildDiffTree from './diff-tree.js';
 
-function getFileData(filepath) {
-  let rawData;
-  const filetype = path.extname(filepath).slice(1);
-
-  try {
-    rawData = fs.readFileSync(path.resolve(process.cwd(), filepath), 'utf8');
-  } catch (e) {
-    throw new Error(`Incorrect filepath provided: ${filepath}`);
-  }
-
-  return parseData(rawData, filetype);
-}
+const getFormat = (filepath) => path.extname(filepath).slice(1);
+const getRawData = (filepath) => fs.readFileSync(path.resolve(process.cwd(), filepath), 'utf8'); 
+const getData = (filepath) => parseData(getRawData(filepath), getFormat(filepath));
 
 export default function generateDiff(filepath1, filepath2, formatType = 'stylish') {
-  const data1 = getFileData(filepath1);
-  const data2 = getFileData(filepath2);
+  const data1 = getData(filepath1);
+  const data2 = getData(filepath2);
 
   const diff = buildDiffTree(data1, data2);
   const format = getFormatter(formatType);
