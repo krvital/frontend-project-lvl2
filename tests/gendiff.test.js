@@ -12,11 +12,18 @@ const diff = readFileSync(getFixturePath('diff.txt'), 'utf-8');
 const plainDiff = readFileSync(getFixturePath('diff-plain.txt'), 'utf-8');
 const jsonDiff = readFileSync(getFixturePath('diff-json.txt'), 'utf-8');
 
+test('diff of two nested files with default format', () => {
+  const filepath1 = getFixturePath('file1.yml');
+  const filepath2 = getFixturePath('file2.json');
+
+  expect(genDiff(filepath1, filepath2)).toMatch(diff);
+});
+
 test('tree diff of two nested files', () => {
   const filepath1 = getFixturePath('file1.yml');
   const filepath2 = getFixturePath('file2.json');
 
-  expect(genDiff(filepath1, filepath2, 'tree')).toMatch(diff);
+  expect(genDiff(filepath1, filepath2, 'stylish')).toMatch(diff);
 });
 
 test('plain diff of two nested files', () => {

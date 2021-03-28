@@ -59,7 +59,7 @@ function getFileData(filepath) {
   return parseData(rawData, filetype);
 }
 
-export default function genDiff(filepath1, filepath2, formatType) {
+export default function genDiff(filepath1, filepath2, formatType = 'stylish') {
   const data1 = getFileData(filepath1);
   const data2 = getFileData(filepath2);
 
