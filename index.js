@@ -1,3 +1,3 @@
-import genDiff from './src/diff-tree';
+import genDiff from './src/index';
 
 export default genDiff;
