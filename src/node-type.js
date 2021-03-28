@@ -1,5 +1,4 @@
-// eslint-disable-next-line
-export const NODE_TYPE = {
+const NODE_TYPE = {
   deleted: 'deleted',
   added: 'added',
   changed: 'changed',
@@ -7,3 +6,5 @@ export const NODE_TYPE = {
   nested: 'nested',
   root: 'root',
 };
+
+export default NODE_TYPE;

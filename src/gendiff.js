@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import _ from 'lodash';
 import parseData from './parsers.js';
-import { NODE_TYPE } from './node-type.js';
+import NODE_TYPE from './node-type.js';
 import getFormatter from './formatting/index.js';
 
 function buildDiffChildren(data1, data2) {

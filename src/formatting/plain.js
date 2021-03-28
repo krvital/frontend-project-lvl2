@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { NODE_TYPE } from '../node-type.js';
+import NODE_TYPE from '../node-type.js';
 
 function getPropertyName(property, parents) {
   return [...parents, property].join('.');
