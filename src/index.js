@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import parseData from './parsers.js';
 import getFormatter from './formatting/index.js';
-import buildDiffTree from './diff-tree';
+import buildDiffTree from './diff-tree.js';
 
 function getFileData(filepath) {
   let rawData;
