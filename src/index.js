@@ -5,7 +5,7 @@ import getFormatter from './formatting/index.js';
 import buildDiffTree from './diff-tree.js';
 
 const getFormat = (filepath) => path.extname(filepath).slice(1);
-const getRawData = (filepath) => fs.readFileSync(path.resolve(process.cwd(), filepath), 'utf8'); 
+const getRawData = (filepath) => fs.readFileSync(path.resolve(process.cwd(), filepath), 'utf8');
 const getData = (filepath) => parseData(getRawData(filepath), getFormat(filepath));
 
 export default function generateDiff(filepath1, filepath2, formatType = 'stylish') {
