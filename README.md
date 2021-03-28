@@ -8,14 +8,14 @@
 This is a diff generator, the tool that allows to compare two files line by line and get a diff.
 There are three formats provided: stylish, plain, and json
 
-### Demo
-[![asciicast](https://asciinema.org/a/402404.svg)](https://asciinema.org/a/402404)
 
-
-### How to run
+### Install and run
 
 ```
 make install
 make link
 gendiff filepath1.json filepath2.json
 ```
+
+### Demo
+[![asciicast](https://asciinema.org/a/402404.svg)](https://asciinema.org/a/402404)

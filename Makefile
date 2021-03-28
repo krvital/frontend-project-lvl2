@@ -1,8 +1,5 @@
 install:
-	npm install
-
-link:
-	npm link
+	npm install && npm link
 
 test:
 	npm test
