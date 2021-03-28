@@ -3,7 +3,7 @@
   "type": "module",
   "version": "1.0.0",
   "description": "Diff generator for json and yml files",
-  "main": "src/gendiff.js",
+  "main": "index.js",
   "scripts": {
     "test": "npx -n --experimental-vm-modules jest"
   },
