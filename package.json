@@ -2,7 +2,7 @@
   "name": "@hexlet/code",
   "type": "module",
   "version": "1.0.0",
-  "description": "![Actions Status](/workflows/hexlet-check/badge.svg)",
+  "description": "Diff generator for json and yml files",
   "main": "src/gendiff.js",
   "scripts": {
     "test": "npx -n --experimental-vm-modules jest --watch"
