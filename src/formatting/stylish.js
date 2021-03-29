@@ -6,15 +6,14 @@ function indent(depth) {
   return SPACE.repeat(depth * 4 - 2);
 }
 
-function stringify(data, depth) {
-  if (!_.isPlainObject(data)) {
-    return data;
+function stringify(data, depth, formatObejct) {
+  if (_.isPlainObject(data)) {
+    const lines = _.map(data, (value, key) => formatObejct({ key, value }, depth + 1));
+
+    return `{\n${lines.join('\n')}\n${indent(depth)}  }`;
   }
 
-  const lines = _.map(data, (value, key) =>
-    typeToFormatter[NODE_TYPE.unchanged]({ key, value }, depth + 1)); // eslint-disable-line
-
-  return `{\n${lines.join('\n')}\n${indent(depth)}  }`;
+  return data;
 }
 
 const typeToFormatter = {
@@ -26,12 +25,12 @@ const typeToFormatter = {
     const lines = node.children.flatMap((child) => typeToFormatter[child.type](child, depth + 1));
     return `${indent(depth)}  ${node.key}: {\n${lines.join('\n')}\n${indent(depth)}  }`;
   },
-  [NODE_TYPE.added]: (node, depth) => `${indent(depth)}+ ${node.key}: ${stringify(node.value, depth)}`,
-  [NODE_TYPE.deleted]: (node, depth) => `${indent(depth)}- ${node.key}: ${stringify(node.value, depth)}`,
-  [NODE_TYPE.unchanged]: (node, depth) => `${indent(depth)}  ${node.key}: ${stringify(node.value, depth)}`,
+  [NODE_TYPE.added]: (node, depth) => `${indent(depth)}+ ${node.key}: ${stringify(node.value, depth, typeToFormatter[NODE_TYPE.unchanged])}`,
+  [NODE_TYPE.deleted]: (node, depth) => `${indent(depth)}- ${node.key}: ${stringify(node.value, depth, typeToFormatter[NODE_TYPE.unchanged])}`,
+  [NODE_TYPE.unchanged]: (node, depth) => `${indent(depth)}  ${node.key}: ${stringify(node.value, depth, typeToFormatter[NODE_TYPE.unchanged])}`,
   [NODE_TYPE.changed]: (node, depth) => [
-    `${indent(depth)}- ${node.key}: ${stringify(node.prevValue, depth)}`,
-    `${indent(depth)}+ ${node.key}: ${stringify(node.newValue, depth)}`,
+    `${indent(depth)}- ${node.key}: ${stringify(node.prevValue, depth, typeToFormatter[NODE_TYPE.unchanged])}`,
+    `${indent(depth)}+ ${node.key}: ${stringify(node.newValue, depth, typeToFormatter[NODE_TYPE.unchanged])}`,
   ].join('\n'),
 };
 
